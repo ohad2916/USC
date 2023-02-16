@@ -1,0 +1,7 @@
+﻿  main.c
+C:\Users\ohada\Desktop\Final Project\USC\main.c(25,9): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'size_t'
+C:\Users\ohada\Desktop\Final Project\USC\main.c(25,9): message : consider using '%zd' in the format string
+C:\Users\ohada\Desktop\Final Project\USC\main.c(25,9): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 2 has type 'size_t'
+C:\Users\ohada\Desktop\Final Project\USC\main.c(25,9): message : consider using '%zd' in the format string
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(43): warning C4716: 'graph_laplacian_calc': must return a value
+  USC.vcxproj -> C:\Users\ohada\Desktop\Final Project\USC\x64\Debug\USC.exe
