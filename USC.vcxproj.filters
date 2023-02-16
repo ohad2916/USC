@@ -28,5 +28,6 @@
     <Text Include="Test Files\input_1.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="example matrix.txt" />
   </ItemGroup>
 </Project>

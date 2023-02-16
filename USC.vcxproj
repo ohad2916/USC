@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Test Files\input_1.txt" />
+    <Text Include="example matrix.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
