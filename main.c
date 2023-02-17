@@ -72,43 +72,13 @@ int main() {
 	/*jacobis*/
 	MATRIX _A = allocate_square_matrix(3);
 	_A[0][0] = 1;_A[0][1] = 0;_A[0][2] = 0;
-	_A[1][0] = 0;_A[1][1] = 2;_A[1][2] = -1;
+	_A[1][0] = 0;_A[1][1] = 4;_A[1][2] = -1;
 	_A[2][0] = 0;_A[2][1] = -1;_A[2][2] = 2;
-	MATRIX_LIST p_list;
-	p_list.this = NULL;
-	p_list.next = NULL;
 
-	for (i = 0; i < 340; i++) {
-		MATRIX pivot_matrix = generate_pivot_matrix(_A, 3);
-		append(pivot_matrix, &p_list);
-		//print_matrix(pivot_matrix, 3, 3);
-		MATRIX dot_res = matrix_dot(_A, pivot_matrix, 3);
-		MATRIX transposed_pivot = transpose_matrix(pivot_matrix, 3);
-		MATRIX second_dot_res = matrix_dot(transposed_pivot, dot_res,3);
-		free(*transposed_pivot);
-		free(*dot_res);
-		free(*_A);
-		_A = second_dot_res;
-		print_matrix(_A, 3, 3);
-		print_matrix(pivot_matrix, 3, 3);
-		char c;
-		scanf("%c",&c);
-	}
-	print_matrix(_A,3, 3);
-	MATRIX dot_res = allocate_square_matrix(3);
-	for (i = 0; i < 3; i++) {
-		dot_res[i][i] = 1;
-	}
-	MATRIX temp_res = NULL;;
-	do {
-		temp_res = matrix_dot(dot_res, p_list.this,3);
-		free(dot_res);
-		dot_res = temp_res;
-		//free(*p_list.this);
-		p_list = *p_list.next;
-		
-	} while (p_list.next != NULL);
-	print_matrix(dot_res, 3, 3);
+	EIGEN_VALUES_VECTORS* test_jacobi = jacobis(_A, 3, 100, 0.0);
+	print_matrix(test_jacobi->eigen_vectors, 3, 3);
+	print_vector(test_jacobi->eigen_values, 3);
+
 
 	return 1;
 }

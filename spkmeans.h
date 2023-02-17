@@ -16,6 +16,10 @@ typedef struct m_list{
 	MATRIX this;
 	struct m_list* next;
 }MATRIX_LIST;
+typedef struct eigen_v {
+	MATRIX eigen_vectors;
+	VECTOR eigen_values;
+}EIGEN_VALUES_VECTORS;
 
 int append(MATRIX a, MATRIX_LIST* list) {
 	if (!list->this)
@@ -122,6 +126,59 @@ MATRIX transpose_matrix(MATRIX p,size_t n) {
 	return res;
 }
 
+EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double epsilon) {
+	EIGEN_VALUES_VECTORS* res = malloc(sizeof(EIGEN_VALUES_VECTORS));
+	MATRIX_LIST p_list;
+	p_list.this = NULL;
+	p_list.next = NULL;
+	double current_off_diag_sum = -1.0;
+	double new_off_diag_sum = .0;
+	double convergence_diff = .0;
+	size_t i, j;
+
+	for (i = 0; i < iteration_limit; i++) {
+		MATRIX pivot_matrix = generate_pivot_matrix(_A, n);
+		append(pivot_matrix, &p_list);
+		MATRIX dot_res = matrix_dot(_A, pivot_matrix, n);
+		MATRIX transposed_pivot = transpose_matrix(pivot_matrix, n);
+		MATRIX second_dot_res = matrix_dot(transposed_pivot, dot_res, n);
+		if(i != 0)
+			free(*_A);
+		_A = second_dot_res;
+		new_off_diag_sum = 0.0;
+		for (i = 0; i < n; i++) {
+			for (j = n+1; j < n; j++) {
+				new_off_diag_sum += _A[i][j]* _A[i][j];
+			}
+		}
+		new_off_diag_sum *= 2;
+		if (current_off_diag_sum - new_off_diag_sum <= epsilon)
+			i = 100;
+		free(*transposed_pivot);
+		free(*dot_res);
+	}
+	MATRIX dot_res = allocate_square_matrix(n);
+	for (i = 0; i < n; i++) {
+		dot_res[i][i] = 1;
+	}
+	MATRIX temp_res = NULL;
+	do {
+		temp_res = matrix_dot(dot_res, p_list.this, 3);
+		free(dot_res);
+		dot_res = temp_res;
+		free(*p_list.this);
+		if(p_list.next != NULL)
+			p_list = *p_list.next;
+
+	} while (p_list.next != NULL);
+	res->eigen_vectors = dot_res;
+	VECTOR eigen_values = malloc(sizeof(double) * n);
+	for (i = 0; i < n; i++) {
+		eigen_values[i] = _A[i][i];
+	}
+	res->eigen_values = eigen_values;
+	return res;
+}
 
 int weighted_adj_calc(double** points, double** target, size_t no_points,size_t dimension) {
 	size_t i;
@@ -164,5 +221,13 @@ int print_matrix(double** mat, size_t rows, size_t cols) {
 		}
 		printf("\n");
 	}
+	return 0;
+}
+int print_vector(VECTOR v, size_t n) {
+	size_t i = 0;
+	for (i = 0; i < n;i++) {
+		printf("%.2f,", v[i]);
+	}
+	printf("\n");
 	return 0;
 }
