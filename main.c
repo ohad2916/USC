@@ -76,8 +76,15 @@ int main() {
 	_A[2][0] = 0;_A[2][1] = -1;_A[2][2] = 2;
 
 	EIGEN_VALUES_VECTORS* test_jacobi = jacobis(_A, 3, 100, 0.0);
+
 	print_matrix(test_jacobi->eigen_vectors, 3, 3);
+	printf("\n");
 	print_vector(test_jacobi->eigen_values, 3);
+	printf("\n");
+	sort_eigen_vectors(test_jacobi->eigen_vectors, test_jacobi->eigen_values, 3);
+	print_matrix(test_jacobi->eigen_vectors, 3, 3);
+	printf("\n");
+	print_vector(test_jacobi->eigen_values,3);
 
 
 	return 1;

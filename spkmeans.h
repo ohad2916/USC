@@ -20,6 +20,10 @@ typedef struct eigen_v {
 	MATRIX eigen_vectors;
 	VECTOR eigen_values;
 }EIGEN_VALUES_VECTORS;
+typedef struct k_eigenvs {
+	MATRIX eigen_vectors;
+	size_t k;
+}FIRST_K_EIGEN;
 
 int append(MATRIX a, MATRIX_LIST* list) {
 	if (!list->this)
@@ -164,20 +168,53 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 	MATRIX temp_res = NULL;
 	do {
 		temp_res = matrix_dot(dot_res, p_list.this, 3);
-		free(dot_res);
+		free(*dot_res);
 		dot_res = temp_res;
 		free(*p_list.this);
 		if(p_list.next != NULL)
 			p_list = *p_list.next;
 
 	} while (p_list.next != NULL);
-	res->eigen_vectors = dot_res;
+	res->eigen_vectors = transpose_matrix(dot_res,n);
+	free(*dot_res);
 	VECTOR eigen_values = malloc(sizeof(double) * n);
 	for (i = 0; i < n; i++) {
 		eigen_values[i] = _A[i][i];
 	}
 	res->eigen_values = eigen_values;
 	return res;
+}
+
+int find_k(VECTOR e_values,size_t n) {
+	size_t i;
+	double max_gap = .0;
+	size_t argMax = 0;
+	for ( i = 0; i < n - 1; i++) {
+		if (fabs(e_values[i + 1] - e_values[i]) > max_gap) {
+			max_gap = fabs(e_values[i + 1] - e_values[i]);
+			argMax = i;
+		}
+	}
+	return i;
+}
+
+int sort_eigen_vectors(VECTOR* e_vectors, VECTOR e_values,size_t n) {
+	size_t i, j;
+	double temp_value;
+	VECTOR temp_vector;
+	for (i = 0; i < n - 1;i++) {
+		for (j = 0; j < n - i -1; j++) {
+			if (e_values[j] > e_values[j + 1]) {
+				temp_value = e_values[j];
+				temp_vector = e_vectors[j];
+				e_values[j] = e_values[j + 1];
+				e_vectors[j] = e_vectors[j + 1];
+				e_values[j + 1] = temp_value;
+				e_vectors[j + 1] = temp_vector;
+			}
+		}
+	}
+	return 0;
 }
 
 int weighted_adj_calc(double** points, double** target, size_t no_points,size_t dimension) {
