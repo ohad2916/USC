@@ -18,6 +18,7 @@ typedef struct m_list{
 }MATRIX_LIST;
 typedef struct eigen_v {
 	MATRIX eigen_vectors;
+	MATRIX eigen_vectors_as_columns;
 	VECTOR eigen_values;
 }EIGEN_VALUES_VECTORS;
 typedef struct k_eigenvs {
@@ -116,39 +117,56 @@ MATRIX matrix_dot(MATRIX a, MATRIX b, size_t n) {
 	return dot;
 }
 
-MATRIX transpose_matrix(MATRIX p,size_t n) {
+MATRIX transpose_matrix(MATRIX p,size_t n,const char* how){
 	size_t i, j;
-	double temp;
-	MATRIX res = allocate_square_matrix(n);
+	double temp1;
+	double temp2;
+	MATRIX res;
+	if (how != "in-place") {
+		res = allocate_square_matrix(n);
+		for (i = 0;i < n;i++)
+			res[i][i] = p[i][i];
+	}
+	else {
+		res = p;
+	}
 	for (i = 0; i < n; i++) {
 		for (j = i+1; j < n; j++) {
-			res[j][i] = p[i][j];
-			res[i][j] = p[j][i];
+			temp1 = p[i][j];
+			temp2 = p[j][i];
+			res[i][j] = temp2;
+			res[j][i] = temp1;
 		}
-		res[i][i] = p[i][i];
 	}
 	return res;
 }
 
 EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double epsilon) {
 	EIGEN_VALUES_VECTORS* res = malloc(sizeof(EIGEN_VALUES_VECTORS));
-	MATRIX_LIST p_list;
-	p_list.this = NULL;
-	p_list.next = NULL;
 	double current_off_diag_sum = -1.0;
 	double new_off_diag_sum = .0;
 	double convergence_diff = .0;
 	size_t i, j;
+	MATRIX dotted_pivots = allocate_square_matrix(n);
+	for (i = 0; i < n; i++)
+		dotted_pivots[i][i] = 1;
 
 	for (i = 0; i < iteration_limit; i++) {
 		MATRIX pivot_matrix = generate_pivot_matrix(_A, n);
-		append(pivot_matrix, &p_list);
+		/*generating eigen vector matrix */
+		MATRIX temp_pivot_pointer = matrix_dot(dotted_pivots, pivot_matrix,n);
+		free(*dotted_pivots);
+		free(dotted_pivots);
+		dotted_pivots = temp_pivot_pointer;
 		MATRIX dot_res = matrix_dot(_A, pivot_matrix, n);
-		MATRIX transposed_pivot = transpose_matrix(pivot_matrix, n);
+		MATRIX transposed_pivot = transpose_matrix(pivot_matrix, n,"in-place");
 		MATRIX second_dot_res = matrix_dot(transposed_pivot, dot_res, n);
-		if(i != 0)
+		if (i != 0) {
 			free(*_A);
+			free(_A);
+		}
 		_A = second_dot_res;
+		//checking convergence
 		new_off_diag_sum = 0.0;
 		for (i = 0; i < n; i++) {
 			for (j = n+1; j < n; j++) {
@@ -158,30 +176,22 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 		new_off_diag_sum *= 2;
 		if (current_off_diag_sum - new_off_diag_sum <= epsilon)
 			i = 100;
+		//cleanup
 		free(*transposed_pivot);
+		free(transposed_pivot);
 		free(*dot_res);
+		free(dot_res);
 	}
-	MATRIX dot_res = allocate_square_matrix(n);
-	for (i = 0; i < n; i++) {
-		dot_res[i][i] = 1;
-	}
-	MATRIX temp_res = NULL;
-	do {
-		temp_res = matrix_dot(dot_res, p_list.this, 3);
-		free(*dot_res);
-		dot_res = temp_res;
-		free(*p_list.this);
-		if(p_list.next != NULL)
-			p_list = *p_list.next;
-
-	} while (p_list.next != NULL);
-	res->eigen_vectors = transpose_matrix(dot_res,n);
-	free(*dot_res);
+	
+	res->eigen_vectors_as_columns = dotted_pivots;
+	res->eigen_vectors = transpose_matrix(dotted_pivots, n, "new");
 	VECTOR eigen_values = malloc(sizeof(double) * n);
 	for (i = 0; i < n; i++) {
 		eigen_values[i] = _A[i][i];
 	}
 	res->eigen_values = eigen_values;
+	free(*_A);
+	free(_A);
 	return res;
 }
 
@@ -198,10 +208,12 @@ int find_k(VECTOR e_values,size_t n) {
 	return i;
 }
 
-int sort_eigen_vectors(VECTOR* e_vectors, VECTOR e_values,size_t n) {
+int sort_eigen_vectors(EIGEN_VALUES_VECTORS* subject,size_t n) {
 	size_t i, j;
 	double temp_value;
 	VECTOR temp_vector;
+	MATRIX e_vectors = subject->eigen_vectors;
+	VECTOR e_values = subject->eigen_values;
 	for (i = 0; i < n - 1;i++) {
 		for (j = 0; j < n - i -1; j++) {
 			if (e_values[j] > e_values[j + 1]) {
@@ -214,6 +226,9 @@ int sort_eigen_vectors(VECTOR* e_vectors, VECTOR e_values,size_t n) {
 			}
 		}
 	}
+	free(*(subject->eigen_vectors_as_columns));
+	free(subject->eigen_vectors_as_columns);
+	subject->eigen_vectors_as_columns = transpose_matrix(e_vectors, n, "new");
 	return 0;
 }
 
