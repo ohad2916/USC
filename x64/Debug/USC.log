@@ -1,9 +1,0 @@
-﻿  spkmeans.c
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(84,19): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(172,4): warning C4013: 'freeMatrix' undefined; assuming extern returning int
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(40,9): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'size_t'
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(40,9): message : consider using '%zd' in the format string
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(40,9): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 2 has type 'size_t'
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(40,9): message : consider using '%zd' in the format string
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(42): warning C4716: 'append': must return a value
-  USC.vcxproj -> C:\Users\ohada\Desktop\Final Project\USC\x64\Debug\USC.exe
