@@ -46,12 +46,11 @@ MATRIX allocateSquareMatrix(size_t n) {
 	double* data;
 	size_t i;
 	if (!(matrix = malloc(sizeof(double*) * n))) {
-		printf("error allocating");
-		return 1;
+		return NULL;
 	}
 	if (!(data = calloc(n*n, sizeof(double)))) {
-		printf("error allocating");
-		return 1;
+		free(matrix);
+		return NULL;
 	}
 	for (i = 0; i <n; i++) {
 		matrix[i] = data + i * n;
@@ -61,6 +60,8 @@ MATRIX allocateSquareMatrix(size_t n) {
 
 MATRIX generatePivotMatrix(MATRIX _A,size_t n) {
 	MATRIX _P = allocateSquareMatrix(n);
+	if (!_P)
+		return NULL;
 	/*finding arg(s)max A(i,j)*/
 	size_t i, j;
 	size_t argmax_i = 0, argmax_j = 0;
@@ -108,6 +109,8 @@ double vectorDot(VECTOR x, VECTOR y, size_t n) {
 MATRIX matrixDot(MATRIX a, MATRIX b, size_t n) {
 	size_t i, j,k;
 	MATRIX dot = allocateSquareMatrix(n);
+	if (!dot)
+		return NULL;
 	for (i = 0; i < n; i++) {
 		for (j = 0; j < n; j++) {
 			for (k = 0;k < n;k++) {
@@ -125,6 +128,8 @@ MATRIX transposeMatrix(MATRIX p,size_t n,const char* how){
 	MATRIX res;
 	if (how != "in-place") {
 		res = allocateSquareMatrix(n);
+		if (!res)
+			return NULL;
 		for (i = 0;i < n;i++)
 			res[i][i] = p[i][i];
 	}
@@ -145,28 +150,53 @@ MATRIX transposeMatrix(MATRIX p,size_t n,const char* how){
 EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double epsilon) {
 	EIGEN_VALUES_VECTORS* res = malloc(sizeof(EIGEN_VALUES_VECTORS));
 	if (!res) {
-		printf("an Error has Occured");
-		return 1;
+		return NULL;
 	}
 	double current_off_diag_sum = -1.0;
 	double new_off_diag_sum = .0;
 	double convergence_diff = .0;
 	size_t i, j,k;
 	MATRIX dotted_pivots = allocateSquareMatrix(n);
+	if (!dotted_pivots) {
+		free(res);
+		return NULL;
+	}
 	for (i = 0; i < n; i++) {
 		dotted_pivots[i][i] = 1;
 	}
 
 	for (i = 0; i < iteration_limit; i++) {
 		MATRIX pivot_matrix = generatePivotMatrix(_A, n);
+		if (!pivot_matrix) {
+			free(res);
+			freeMatrix(dotted_pivots);
+			return NULL;
+		}
 		/*generating eigen vector matrix */
 		MATRIX temp_pivot_pointer = matrixDot(dotted_pivots, pivot_matrix,n);
-		free(*dotted_pivots);
-		free(dotted_pivots);
+		if (!temp_pivot_pointer) {
+			free(res);
+			freeMatrix(pivot_matrix);
+			freeMatrix(dotted_pivots);
+			return NULL;
+		}
+		freeMatrix(dotted_pivots);
 		dotted_pivots = temp_pivot_pointer;
 		MATRIX dot_res = matrixDot(_A, pivot_matrix, n);
+		if (!dot_res) {
+			free(res);
+			freeMatrix(pivot_matrix);
+			freeMatrix(temp_pivot_pointer);
+			return NULL;
+		}
 		MATRIX transposed_pivot = transposeMatrix(pivot_matrix, n,"in-place");
 		MATRIX second_dot_res = matrixDot(transposed_pivot, dot_res, n);
+		if (!second_dot_res) {
+			free(res);
+			freeMatrix(pivot_matrix);
+			freeMatrix(dot_res);
+			freeMatrix(temp_pivot_pointer);
+		}
 		if (i != 0) {
 			free(*_A);
 			free(_A);
@@ -191,13 +221,21 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 	
 	res->eigen_vectors_as_columns = dotted_pivots;
 	res->eigen_vectors = transposeMatrix(dotted_pivots, n, "new");
+	if (!(res->eigen_vectors)) {
+		freeMatrix(dotted_pivots);
+		free(res);
+	}
 	VECTOR eigen_values = malloc(sizeof(double) * n);
+	if (!eigen_values) {
+		freeMatrix(dotted_pivots);
+		freeMatrix(res->eigen_vectors);
+		free(res);
+	}
 	for (i = 0; i < n; i++) {
 		eigen_values[i] = _A[i][i];
 	}
 	res->eigen_values = eigen_values;
-	free(*_A);
-	free(_A);
+	freeMatrix(_A);
 	return res;
 }
 
@@ -240,6 +278,9 @@ int sortEigenVectors(EIGEN_VALUES_VECTORS* subject,size_t n) {
 
 MATRIX weightedAdjacencyMatrix(double** points, size_t n,size_t dimension) {
 	MATRIX res = allocateSquareMatrix(n);
+	if (!res) {
+		return NULL;
+	}
 	size_t i;
 	size_t j;
 	for (i = 0; i < n; i++) {
@@ -253,6 +294,8 @@ MATRIX weightedAdjacencyMatrix(double** points, size_t n,size_t dimension) {
 
 MATRIX diagonalDegreeMatrix(double** adj_matrix, size_t n) {
 	MATRIX res = allocateSquareMatrix(n);
+	if (!res)
+		return NULL;
 	size_t i;
 	size_t j;
 	for (i = 0; i < n; i++) {
@@ -265,6 +308,8 @@ MATRIX diagonalDegreeMatrix(double** adj_matrix, size_t n) {
 
 MATRIX graphLaplacian(double** adj_matrix, double** diag_matrix, size_t n) {
 	MATRIX res = allocateSquareMatrix(n);
+	if (!res)
+		return NULL;
 	size_t i, j;
 	for (i = 0; i < n; i++) {
 		for (j = i; j < n; j++) {
@@ -278,12 +323,10 @@ MATRIX graphLaplacian(double** adj_matrix, double** diag_matrix, size_t n) {
 int printMatrix(double** mat, size_t rows, size_t cols) {
 	int i = 0; int j = 0;
 	for (i = 0; i < rows; i++) {
-		for (j = 0; j < cols; j++) {
-			printf("%.2f", mat[i][j]);
-			if (j < cols - 1)
-				printf(",");
+		for (j = 0; j < cols - 1; j++) {
+			printf("%.2f,", mat[i][j]);
 		}
-		printf("\n");
+		printf("%.2f\n", mat[i][cols - 1]);
 	}
 	return 0;
 }
@@ -294,5 +337,11 @@ int printVector(VECTOR v, size_t n) {
 	}
 	printf("%.2f",v[n - 1]);
 	printf("\n");
+	return 0;
+}
+
+int freeMatrix(MATRIX a) {
+	free(*a);
+	free(a);
 	return 0;
 }
