@@ -136,16 +136,11 @@
     <ClInclude Include="spkmeans.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </PreprocessorDefinitions>
-      <UndefinePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
-      <UndefinePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_CRT_SECURE_NO_WARNINGS;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
-    </ClCompile>
+    <ClCompile Include="spkmeans.c" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Test Files\10by10matrix.txt" />
+    <Text Include="Test Files\4by4.txt" />
     <Text Include="Test Files\input_1.txt" />
     <Text Include="example matrix.txt" />
   </ItemGroup>

@@ -20,7 +20,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
+    <ClCompile Include="spkmeans.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,5 +29,11 @@
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="example matrix.txt" />
+    <Text Include="Test Files\10by10matrix.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Test Files\4by4.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
