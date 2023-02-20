@@ -319,6 +319,23 @@ MATRIX graphLaplacian(double** adj_matrix, double** diag_matrix, size_t n) {
 	return res;
 }
 
+MATRIX allocateNonSquareMatrix(size_t rows, size_t cols) {
+	MATRIX matrix;
+	double* data;
+	size_t i;
+	if (!(matrix = malloc(sizeof(double*) * rows))) {
+		return NULL;
+	}
+	if (!(data = calloc(rows*cols, sizeof(double)))) {
+		free(matrix);
+		return NULL;
+	}
+	for (i = 0; i < rows; i++) {
+		matrix[i] = data + i * cols;
+	}
+	return matrix;
+}
+
 int printMatrix(double** mat, size_t rows, size_t cols) {
 	size_t i = 0; size_t j = 0;
 	for (i = 0; i < rows; i++) {
