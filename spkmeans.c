@@ -103,7 +103,6 @@ int main(int argc, char* argv[]) {
 	}
 	graph_laplacian = graphLaplacian(weight_adj, diag_degree_mat, point_count);
 	if (mode == 2) {
-		printf("GOAL 2\n");
 		if (graph_laplacian)
 			printMatrix(graph_laplacian, point_count, point_count);
 		else {
