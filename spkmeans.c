@@ -1,6 +1,6 @@
 #include <string.h>
 #include "spkmeans.h"
-/*#pragma warning(disable:4996)*/
+#pragma warning(disable:4996)
 
 
 int main(int argc, char* argv[]) {
@@ -76,6 +76,23 @@ int main(int argc, char* argv[]) {
 	}
 	fclose(file);
 	/*end reading file*/
+	if (mode == 3) {
+		jacobis_res = jacobis(points_list, point_count, 100, 0.00001);
+		if (jacobis_res) {
+			printVector(jacobis_res->eigen_values, point_count);
+			printMatrix(jacobis_res->eigen_vectors_as_columns, point_count, point_count);
+		}
+		else {
+			return_value = 1;
+			printf("an Error has occured!");
+		}
+		freeMatrix(points_list);
+		free(jacobis_res->eigen_values);
+		freeMatrix(jacobis_res->eigen_vectors);
+		freeMatrix(jacobis_res->eigen_vectors_as_columns);
+		free(jacobis_res);
+		return return_value;
+	}
 	weight_adj = weightedAdjacencyMatrix(points_list, point_count, dimension);
 	if (mode == 0) {
 		if (weight_adj)
@@ -115,25 +132,12 @@ int main(int argc, char* argv[]) {
 		freeMatrix(points_list);
 		return return_value;
 	}
-	jacobis_res = jacobis(graph_laplacian, point_count, 100, 0.000001);
-	if (jacobis_res) {
-		printVector(jacobis_res->eigen_values, point_count);
-		printMatrix(jacobis_res->eigen_vectors_as_columns, point_count, point_count);
-	}
-	else {
-		return_value = 1;
-		printf("an Error has occured!");
-	}
 
 	/*cleanup*/
 	freeMatrix(graph_laplacian);
 	freeMatrix(diag_degree_mat);
 	freeMatrix(weight_adj);
 	freeMatrix(points_list);
-	free(jacobis_res->eigen_values);
-	freeMatrix(jacobis_res->eigen_vectors);
-	freeMatrix(jacobis_res->eigen_vectors_as_columns);
-	free(jacobis_res);
 	
 	return return_value;
 

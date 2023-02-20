@@ -221,12 +221,14 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 	if (!(res->eigen_vectors)) {
 		freeMatrix(dotted_pivots);
 		free(res);
+		return NULL;
 	}
 	eigen_values = malloc(sizeof(double) * n);
 	if (!eigen_values) {
 		freeMatrix(dotted_pivots);
 		freeMatrix(res->eigen_vectors);
 		free(res);
+		return NULL;
 	}
 	for (i = 0; i < n; i++) {
 		eigen_values[i] = _A[i][i];
