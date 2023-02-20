@@ -1,11 +1,6 @@
 ﻿  spkmeans.c
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(50,11): warning C4047: 'return': 'double **' differs in levels of indirection from 'int'
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(54,11): warning C4047: 'return': 'double **' differs in levels of indirection from 'int'
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(83,19): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(149,11): warning C4047: 'return': 'EIGEN_VALUES_VECTORS *' differs in levels of indirection from 'int'
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(40,9): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'size_t'
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(40,9): message : consider using '%zd' in the format string
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(40,9): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 2 has type 'size_t'
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(40,9): message : consider using '%zd' in the format string
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(42): warning C4716: 'append': must return a value
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(50,9): warning C4477: 'printf' : format string '%lu' requires an argument of type 'unsigned long', but variadic argument 1 has type 'size_t'
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(50,9): message : consider using '%zu' in the format string
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(50,9): warning C4477: 'printf' : format string '%lu' requires an argument of type 'unsigned long', but variadic argument 2 has type 'size_t'
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.c(50,9): message : consider using '%zu' in the format string
   USC.vcxproj -> C:\Users\ohada\Desktop\Final Project\USC\x64\Debug\USC.exe
