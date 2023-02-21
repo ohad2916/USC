@@ -102,7 +102,7 @@ if goal == 'spk':
 
 if goal in ['wam', 'ddg', 'gl']:
     X_df = pd.read_csv(file_name, header=None)
-    X = X_df.to_list()
+    X = X_df.values.tolist()
 
     if goal == 'wam':
         Matrix = mk.wam(X)  # weighted adjacency matrix
@@ -116,7 +116,7 @@ if goal in ['wam', 'ddg', 'gl']:
 
 if goal == 'jacobi':
     sym_Matrix_df = pd.read_csv(file_name, header=None)
-    sym_Matrix = sym_Matrix_df.to_list()
+    sym_Matrix = sym_Matrix_df.values.tolist()
 
     reg_jacobi_values, reg_jacobi_vectors, reg_k = mk.jacobi(sym_Matrix, "unsorted", -1)
 
