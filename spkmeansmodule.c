@@ -318,6 +318,10 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_MemoryError, "An Error Has Occurred");
         return NULL;
     }
+    if (requested_k >= 0 && (strcmp(how, "sorted") != 0)) {
+        PyErr_SetString(PyExc_Exception, "how should be \"sorted\" if k>=0");
+        return NULL;
+    }
     size_t no_points = PyObject_Length(py_point_list);
     PyObject* point = PyList_GetItem(py_point_list, 0);
     size_t dimension = PyObject_Length(point);
@@ -343,7 +347,7 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_MemoryError, "An Error Has Occurred");
         return NULL;
     }
-    size_t k = 0;
+    size_t k = -1;
     if (strcmp(how,"sorted")==0) {
         sortEigenVectors(jacobis_res, dimension);
         k = find_k(jacobis_res->eigen_values, dimension);
