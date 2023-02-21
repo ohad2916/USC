@@ -313,7 +313,8 @@ static PyObject* gl(PyObject* self, PyObject* args) {
 static PyObject* jacob(PyObject* self, PyObject* args) {
     PyObject* py_point_list;
     char* how;
-    if (!PyArg_ParseTuple(args, "Os*", &py_point_list,&how)) {
+    int requested_k;
+    if (!PyArg_ParseTuple(args, "Os*n", &py_point_list,&how,&requested_k)) {
         PyErr_SetString(PyExc_MemoryError, "An Error Has Occurred");
         return NULL;
     }
@@ -347,12 +348,19 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
         sortEigenVectors(jacobis_res, dimension);
         k = find_k(jacobis_res->eigen_values, dimension);
     }
+    int col_limit = dimension;
+    if (requested_k > 0) {
+        col_limit = requested_k;
+    }
+    else if (requested_k == 0)
+        col_limit = k;
+
     PyObject* py_eigen_vectors = PyList_New(dimension);
     MATRIX c_eigen_vectors = jacobis_res->eigen_vectors_as_columns;
     for (i = 0; i < dimension; i++) {
-        PyObject* row = PyList_New(dimension);
+        PyObject* row = PyList_New(col_limit);
         PyList_SetItem(py_eigen_vectors, i, row);        //raises exception
-        for (j = 0; j < dimension; j++) {
+        for (j = 0; j < col_limit; j++) {
             PyList_SetItem(row, j, PyFloat_FromDouble(c_eigen_vectors[i][j]));
         }
     }
