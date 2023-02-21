@@ -348,6 +348,7 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
         return NULL;
     }
     size_t k = -1;
+    double* vector_ptr_for_freeing_later = *(jacobis_res->eigen_vectors);
     if (strcmp(how,"sorted")==0) {
         sortEigenVectors(jacobis_res, dimension);
         k = find_k(jacobis_res->eigen_values, dimension);
@@ -358,7 +359,6 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
     }
     else if (requested_k == 0)
         col_limit = k;
-
     PyObject* py_eigen_vectors = PyList_New(dimension);
     MATRIX c_eigen_vectors = jacobis_res->eigen_vectors_as_columns;
     for (i = 0; i < dimension; i++) {
@@ -373,10 +373,10 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
     for (i = 0; i < dimension; i++) {
         PyList_SetItem(py_eigen_values, i, PyFloat_FromDouble(c_eigen_values[i]));
     }
-
     freeMatrix(c_point_list);
-    freeMatrix(jacobis_res->eigen_vectors);
-    freeMatrix(jacobis_res->eigen_vectors_as_columns);
+    free(vector_ptr_for_freeing_later);
+    free(jacobis_res->eigen_vectors);
+    freeMatrix(jacobis_res->eigen_vectors_as_columns);;
     free(jacobis_res->eigen_values);
     free(jacobis_res);
     return Py_BuildValue("OOn",py_eigen_values,py_eigen_vectors,k);

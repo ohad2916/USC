@@ -78,7 +78,7 @@ def init_centroids(data, num_clusters):
 
 if goal == 'spk':
     X_df = pd.read_csv(file_name, header=None)
-    X = X_df.to_list()
+    X = X_df.values.tolist()
     L = mk.gl(X)  # graph Laplacian
 
     if k == -1:
