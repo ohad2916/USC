@@ -23,13 +23,13 @@ gl = mk.gl(matrix)
 #          where K is computed by the eigen-gap heuristic. third argument should be >=0
 #          only if how = "sorted". examples:
 # computing regular jacobi (not case 'spk'):
-reg_jacobi_values, reg_jacobi_vectors,reg_k = mk.jacobi(matrix, "unsorted", -1)
+reg_jacobi_values, reg_jacobi_vectors, reg_k = mk.jacobi(matrix, "unsorted", -1)
 
 print(','.join(f'{c:.3f}' for c in reg_jacobi_values))
 for line in reg_jacobi_vectors:
     print(','.join(f'{c:.4f}' for c in line))
 print(f'computed K is: {reg_k} ,defaults in case "unsorted" \n')
-# computing full jacobi (case 'spk) with the K from eigen-gap heuristic:
+# computing full jacobi (case 'spk') with the K from eigen-gap heuristic:
 full_jacobi_values, full_jacobi_vectors, computed_K = mk.jacobi(matrix, "sorted", 0)
 print(','.join(f'{c:.3f}' for c in full_jacobi_values))
 for line in full_jacobi_vectors:
@@ -37,7 +37,7 @@ for line in full_jacobi_vectors:
 print(f'computed K is: {computed_K}\n')
 # same thing with K provided by user:
 user_K = 2
-user_jacobi_values, user_jacobi_vectors,reg_k2 = mk.jacobi(matrix, "sorted", user_K)
+user_jacobi_values, user_jacobi_vectors, reg_k2 = mk.jacobi(matrix, "sorted", user_K)
 print(','.join(f'{c:.3f}' for c in user_jacobi_values))
 for line in user_jacobi_vectors:
     print(','.join(f'{c:.4f}' for c in line))
