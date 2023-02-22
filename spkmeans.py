@@ -58,15 +58,42 @@ def init_centroids(data, num_clusters):
         for j in range(data.shape[0]):  # calculate dx for each point
             p = data.iloc[j]
             # we first calculate the distance to the last centroid and then check if there is a closer one.
-            dx = euc_d(centroids[len(centroids) - 1], p, len(p) - 1)
+            dx = euc_d(centroids[len(centroids) - 1], p, len(p))
             for m in range(len(centroids) - 1):
-                dist_to_next_centroid = euc_d(centroids[m], p, len(p) - 1)
+                dist_to_next_centroid = euc_d(centroids[m], p, len(p))
                 dx = min(dx, dist_to_next_centroid)
 
             prob[j] = dx
             sum_dx += dx
 
         prob /= sum_dx
+
+        next_centroid_index = int(np.random.choice(data.shape[0], p=prob))
+        new_centroid = data.iloc[next_centroid_index]
+        centroids.append(new_centroid)
+        centroids_indices.append(next_centroid_index)
+
+    return pd.DataFrame(centroids), centroids_indices
+
+
+def init_centroids2(data, num_clusters):
+    centroids = []
+    centroids_indices = []
+    prob = np.zeros(data.shape[0])
+
+    first_centroid_index = int(np.random.choice(data.shape[0]))
+    first_centroid = data.iloc[first_centroid_index]
+    centroids.append(first_centroid)
+    centroids_indices.append(first_centroid_index)
+
+    min_dx = np.sqrt(np.sum((data - first_centroid) ** 2, axis=1))
+
+    for i in range(num_clusters - 1):  # init num_clusters-1 more centroids
+        for c in centroids:
+            current_dx = np.sqrt(np.sum((data - c) ** 2, axis=1))
+            min_dx = np.minimum(current_dx, min_dx)
+
+        prob = min_dx / np.sum(min_dx)
 
         next_centroid_index = int(np.random.choice(data.shape[0], p=prob))
         new_centroid = data.iloc[next_centroid_index]
@@ -83,11 +110,11 @@ if goal == 'spk':
 
     if k == -1:
         reg_jacobi_values, U, reg_k = mk.jacobi(L, "sorted", 0)
-        starting_centroids_df, starting_centroids_indices = init_centroids(pd.DataFrame(U), reg_k)
+        starting_centroids_df, starting_centroids_indices = init_centroids2(pd.DataFrame(U), reg_k)
 
     elif k >= 0:
         reg_jacobi_values, U, reg_k = mk.jacobi(L, "sorted", k)
-        starting_centroids_df, starting_centroids_indices = init_centroids(pd.DataFrame(U), k)
+        starting_centroids_df, starting_centroids_indices = init_centroids2(pd.DataFrame(U), k)
 
     starting_centroids = starting_centroids_df.values.tolist()
 
