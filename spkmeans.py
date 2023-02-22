@@ -73,7 +73,7 @@ def init_centroids(data, num_clusters):
         centroids.append(new_centroid)
         centroids_indices.append(next_centroid_index)
 
-    return centroids, centroids_indices
+    return pd.DataFrame(centroids), centroids_indices
 
 
 if goal == 'spk':
@@ -83,11 +83,13 @@ if goal == 'spk':
 
     if k == -1:
         reg_jacobi_values, U, reg_k = mk.jacobi(L, "sorted", 0)
-        starting_centroids, starting_centroids_indices = init_centroids(pd.DataFrame(U), reg_k)
+        starting_centroids_df, starting_centroids_indices = init_centroids(pd.DataFrame(U), reg_k)
 
     elif k >= 0:
         reg_jacobi_values, U, reg_k = mk.jacobi(L, "sorted", k)
-        starting_centroids, starting_centroids_indices = init_centroids(pd.DataFrame(U), k)
+        starting_centroids_df, starting_centroids_indices = init_centroids(pd.DataFrame(U), k)
+
+    starting_centroids = starting_centroids_df.values.tolist()
 
     try:
         kmeans_res = mk.spk(X, starting_centroids, iter_, epsilon)
