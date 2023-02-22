@@ -92,7 +92,7 @@ if goal == 'spk':
     starting_centroids = starting_centroids_df.values.tolist()
 
     try:
-        kmeans_res = mk.spk(X, starting_centroids, iter_, epsilon)
+        kmeans_res = mk.spk(U, starting_centroids, iter_, epsilon)
     except:
         print("An Error Has Occurred")
         sys.exit()
