@@ -1,2 +1,6 @@
 
 .vs/USC/v17/Browse.VC.opendb
+.idea/misc.xml
+*.db
+.vs/USC/v17/Browse.VC.db-shm
+.vs/USC/v17/Browse.VC.db-wal

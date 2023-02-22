@@ -348,17 +348,18 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
         return NULL;
     }
     size_t k = -1;
+    int col_limit = dimension;
     double* vector_ptr_for_freeing_later = *(jacobis_res->eigen_vectors);
     if (strcmp(how,"sorted")==0) {
         sortEigenVectors(jacobis_res, dimension);
         k = find_k(jacobis_res->eigen_values, dimension);
+        if (requested_k == 0)
+            col_limit = k;
     }
-    int col_limit = dimension;
     if (requested_k > 0) {
         col_limit = requested_k;
     }
-    else if (requested_k == 0)
-        col_limit = k;
+
     PyObject* py_eigen_vectors = PyList_New(dimension);
     MATRIX c_eigen_vectors = jacobis_res->eigen_vectors_as_columns;
     for (i = 0; i < dimension; i++) {

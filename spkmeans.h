@@ -242,13 +242,13 @@ size_t find_k(VECTOR e_values,size_t n) {
 	size_t i;
 	double max_gap = .0;
 	size_t argMax;
-	for ( i = 0; i < n - 1; i++) {
-		if (fabs(e_values[i + 1] - e_values[i]) > max_gap) {
-			max_gap = fabs(e_values[i + 1] - e_values[i]);
+	for ( i = 0; i < n/2; i++) {
+		if (e_values[i + 1] - e_values[i] > max_gap) {
+			max_gap = e_values[i + 1] - e_values[i];
 			argMax = i;
 		}
 	}
-	return argMax;
+	return argMax + 1;
 }
 
 int sortEigenVectors(EIGEN_VALUES_VECTORS* subject,size_t n) {
