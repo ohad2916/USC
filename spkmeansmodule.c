@@ -315,7 +315,7 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
     char* how;
     int requested_k;
     if (!PyArg_ParseTuple(args, "Os*n", &py_point_list,&how,&requested_k)) {
-        PyErr_SetString(PyExc_MemoryError, "An Error Has Occurred");
+        PyErr_SetString(PyExc_Exception, "An Error Has Occurred");
         return NULL;
     }
     if (requested_k >= 0 && (strcmp(how, "sorted") != 0)) {
@@ -326,7 +326,7 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
     PyObject* point = PyList_GetItem(py_point_list, 0);
     size_t dimension = PyObject_Length(point);
     if (no_points != dimension) {
-        PyErr_SetString(PyExc_MemoryError, "An Error Has Occurred");
+        PyErr_SetString(PyExc_Exception, "Matrix is not Symmetric!");
         return NULL;
     }
     size_t i, j;

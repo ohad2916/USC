@@ -1,2 +1,7 @@
 ﻿  spkmeans.c
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(82,11): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(82,29): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(165,9): warning C4101: 'a_ii': unreferenced local variable
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(165,15): warning C4101: 'a_jj': unreferenced local variable
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(165,21): warning C4101: 'a_ij': unreferenced local variable
   USC.vcxproj -> C:\Users\ohada\Desktop\Final Project\USC\x64\Debug\USC.exe

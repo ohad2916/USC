@@ -139,7 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="spkmeans.c" />
-    <ClCompile Include="spkmeansmodule.c" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Test Files\10by10matrix.txt" />

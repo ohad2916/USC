@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define MATRIX double**
 #define VECTOR double*
@@ -23,7 +24,10 @@ typedef struct k_eigenvs {
 	MATRIX eigen_vectors;
 	size_t k;
 }FIRST_K_EIGEN;
-
+typedef struct pivot_values_ {
+	int i, j;
+	double s, c;
+}PIVOT_VALUES;
 int freeMatrix(MATRIX a) {
 	free(*a);
 	free(a);
@@ -48,14 +52,15 @@ MATRIX allocateSquareMatrix(size_t n) {
 	return matrix;
 }
 
-MATRIX generatePivotMatrix(MATRIX _A,size_t n) {
-	size_t i, j,argmax_i,argmax_j;
+PIVOT_VALUES* generatePivotValues(MATRIX _A, size_t n) {	// i,j,s,c
+	size_t i, j, argmax_i, argmax_j;
 	double max_value = -1.0;
-	double phi,c,t,s;
+	double phi, c, t, s;
 	int sign;
-	MATRIX _P = allocateSquareMatrix(n);
-	if (!_P)
+	PIVOT_VALUES* res = malloc(sizeof(PIVOT_VALUES));
+	if (!res) {
 		return NULL;
+	}
 	/*finding arg(s)max A(i,j)*/
 	argmax_i = 0; argmax_j = 0;
 	sign = 0;
@@ -75,17 +80,27 @@ MATRIX generatePivotMatrix(MATRIX _A,size_t n) {
 	t = sign / ((fabs(phi) + sqrt(phi * phi + 1)));
 	c = 1 / (sqrt(t * t + 1));
 	s = t * c;
-	/*ammending pivot matrix*/
+	res->i = argmax_i;res->j = argmax_j;res->s = s;res->c = c;
+	return res;
+}
+
+int generatePivotMatrix(MATRIX target,size_t n,PIVOT_VALUES* pivot_values) {
+	//memset((*target), 0.0, pow(n,2));
+	int i, j;
+	double s, c;
 	for (i = 0; i < n; i++) {
-		_P[i][i] = 1;
+		target[i][i] = 1;
 	}
-	_P[argmax_i][argmax_i] = c;
-	_P[argmax_i][argmax_j] = s;
-	_P[argmax_j][argmax_j] = c;
+	i = pivot_values->i;
+	j = pivot_values->j;
+	s = pivot_values->s;
+	c = pivot_values->c;
+	target[i][i] = c;
+	target[i][j] = s;
+	target[j][j] = c;
 	if(s != 0.0)
-		_P[argmax_j][argmax_i] = -s;
-	
-	return _P;
+		target[j][i] = -s;
+	return 0;
 }
 
 double vectorDot(VECTOR x, VECTOR y, size_t n) {
@@ -143,12 +158,15 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 	double new_off_diag_sum = .0;
 	MATRIX dotted_pivots = NULL; MATRIX pivot_matrix = NULL;MATRIX temp_pivot_pointer = NULL;
 	MATRIX dot_res = NULL;MATRIX transposed_pivot = NULL;MATRIX second_dot_res = NULL;
-	VECTOR eigen_values = NULL;
-	size_t i, j,k;
+	VECTOR eigen_values = NULL;VECTOR I_col;VECTOR J_col;
+	double a_ii, a_jj, a_ij, a_ii_tag, a_jj_tag,s,c;
+	size_t i, j,k, _i,_j,m;
+	PIVOT_VALUES* pivot_values;
 	EIGEN_VALUES_VECTORS* res = malloc(sizeof(EIGEN_VALUES_VECTORS));
 	if (!res) {
 		return NULL;
 	}
+	pivot_matrix = allocateSquareMatrix(n);
 	dotted_pivots = allocateSquareMatrix(n);
 	if (!dotted_pivots) {
 		free(res);
@@ -157,16 +175,25 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 	for (i = 0; i < n; i++) {
 		dotted_pivots[i][i] = 1;
 	}
+	if (!(J_col = malloc(sizeof(double) * n))) {
+		return NULL;
+	}
+	if (!(I_col = malloc(sizeof(double) * n))) {
+		return NULL;
+	}
 
 	for (i = 0; i < iteration_limit; i++) {
-		pivot_matrix = generatePivotMatrix(_A, n);
-		if (!pivot_matrix) {
-			free(res);
-			freeMatrix(dotted_pivots);
-			return NULL;
-		}
+		pivot_values = generatePivotValues(_A, n);
+		generatePivotMatrix(pivot_matrix, n,pivot_values);
+
+		_i = pivot_values->i;
+		_j = pivot_values->j;
+		s = pivot_values->s;
+		c = pivot_values->c;
 		/*generating eigen vector matrix */
-		temp_pivot_pointer = matrixDot(dotted_pivots, pivot_matrix,n);
+		memset(I_col, 0.0, n);
+		memset(J_col, 0.0, n);
+		/*temp_pivot_pointer = matrixDot(dotted_pivots, pivot_matrix,n);
 		if (!temp_pivot_pointer) {
 			free(res);
 			freeMatrix(pivot_matrix);
@@ -174,27 +201,38 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 			return NULL;
 		}
 		freeMatrix(dotted_pivots);
-		dotted_pivots = temp_pivot_pointer;
-		dot_res = matrixDot(_A, pivot_matrix, n);
-		if (!dot_res) {
-			free(res);
-			freeMatrix(pivot_matrix);
-			freeMatrix(temp_pivot_pointer);
-			return NULL;
+		dotted_pivots = temp_pivot_pointer;*/
+		for (k = 0; k < n;k++) {
+			for (m = 0; m < n; m++) {
+				I_col[k] += dotted_pivots[k][m] * pivot_matrix[m][_i];
+				J_col[k] += dotted_pivots[k][m] * pivot_matrix[m][_i];
+			}
 		}
-		transposed_pivot = transposeMatrix(pivot_matrix, n,"in-place");
-		second_dot_res = matrixDot(transposed_pivot, dot_res, n);
-		if (!second_dot_res) {
-			free(res);
-			freeMatrix(pivot_matrix);
-			freeMatrix(dot_res);
-			freeMatrix(temp_pivot_pointer);
+		for (k = 0; k < n;k++) {
+			dotted_pivots[k][_i] = I_col[k];
+			dotted_pivots[k][_j] = J_col[k];
 		}
-		if (i != 0) {
-			free(*_A);
-			free(_A);
+
+		//------calculating A'------
+		
+			//copying columns
+	
+		for (k = 0; k < n;k++) {
+			I_col[k] = _A[k][_i];
+			J_col[k] = _A[k][_j];
 		}
-		_A = second_dot_res;
+		a_ii_tag = pow(c, 2) * _A[_i][_i] + pow(s, 2) * _A[_j][_j] - 2 * s * c * _A[_i][_j];
+		a_jj_tag = pow(s, 2) * _A[_i][_i] + pow(c, 2) * _A[_j][_j] + 2 * s * c * _A[_i][_j];
+		for (k = 0; k < n;k++) {
+			_A[k][ _i] = c * I_col[k] - s * J_col[k];
+			_A[_i][k] = c * I_col[k] - s * J_col[k];
+			_A[k][_j] = c * J_col[k] + s * I_col[k];
+			_A[_j][k] = c * J_col[k] + s * I_col[k];
+		}
+		_A[_i][_i] = a_ii_tag;
+		_A[_j][_j] = a_jj_tag;
+		_A[_i][_j] = 0.0;
+		_A[_j][_i] = 0.0;
 		/*checking convergence*/
 		new_off_diag_sum = 0.0;
 		for (k = 0; k < n; k++) {
@@ -204,10 +242,10 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 		}
 		new_off_diag_sum *= 2.0;
 		/*cleanup*/
-		free(*transposed_pivot);
+		/*free(*transposed_pivot);
 		free(transposed_pivot);
 		free(*dot_res);
-		free(dot_res);
+		free(dot_res);*/
 
 		/*breaking in case converged*/
 		if ((current_off_diag_sum - new_off_diag_sum) <= epsilon) {
@@ -234,7 +272,9 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 		eigen_values[i] = _A[i][i];
 	}
 	res->eigen_values = eigen_values;
-	freeMatrix(_A);
+
+	free(pivot_values);
+	freeMatrix(pivot_matrix);
 	return res;
 }
 
@@ -284,8 +324,12 @@ MATRIX weightedAdjacencyMatrix(double** points, size_t n,size_t dimension) {
 	}
 	for (i = 0; i < n; i++) {
 		for (j = i; j < n;j++) {
-			res[i][j] = twoNorm(points[i], points[j], dimension);
-			res[j][i] = res[i][j];
+			double val = twoNorm(points[i], points[j], dimension);
+			val *= -1;
+			val /= 2;
+			val = exp(val);
+			res[i][j] = val;
+			res[j][i] = val;
 		}
 	}
 	return res;
