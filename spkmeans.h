@@ -191,8 +191,8 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 		s = pivot_values->s;
 		c = pivot_values->c;
 		/*generating eigen vector matrix */
-		memset(I_col, 0.0, n);
-		memset(J_col, 0.0, n);
+		memset(I_col, 0.0, n*(sizeof(double)));
+		memset(J_col, 0.0, n*(sizeof(double)));
 		/*temp_pivot_pointer = matrixDot(dotted_pivots, pivot_matrix,n);
 		if (!temp_pivot_pointer) {
 			free(res);

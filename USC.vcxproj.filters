@@ -23,6 +23,9 @@
     <ClCompile Include="spkmeans.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="spkmeansmodule.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Test Files\input_1.txt">
