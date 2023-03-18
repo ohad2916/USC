@@ -5,6 +5,8 @@
 
 #define MATRIX double**
 #define VECTOR double*
+#define _is_negative_zero(x) ((x == 0.0 && signbit(x) != 0) || \
+                              (x > -0.0001 && x < 0.0))
 
 double twoNorm(double* a, double* b, size_t dimension) {
 	size_t i = 0;
@@ -47,7 +49,7 @@ MATRIX allocateSquareMatrix(size_t n) {
 		return NULL;
 	}
 	for (i = 0; i <n; i++) {
-		matrix[i] = data + i * n;
+		matrix[i] = data + (i * n);
 	}
 	return matrix;
 }
@@ -193,19 +195,11 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 		/*generating eigen vector matrix */
 		memset(I_col, 0.0, n*(sizeof(double)));
 		memset(J_col, 0.0, n*(sizeof(double)));
-		/*temp_pivot_pointer = matrixDot(dotted_pivots, pivot_matrix,n);
-		if (!temp_pivot_pointer) {
-			free(res);
-			freeMatrix(pivot_matrix);
-			freeMatrix(dotted_pivots);
-			return NULL;
-		}
-		freeMatrix(dotted_pivots);
-		dotted_pivots = temp_pivot_pointer;*/
+
 		for (k = 0; k < n;k++) {
 			for (m = 0; m < n; m++) {
 				I_col[k] += dotted_pivots[k][m] * pivot_matrix[m][_i];
-				J_col[k] += dotted_pivots[k][m] * pivot_matrix[m][_i];
+				J_col[k] += dotted_pivots[k][m] * pivot_matrix[m][_j];
 			}
 		}
 		for (k = 0; k < n;k++) {
@@ -247,6 +241,11 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 		free(*dot_res);
 		free(dot_res);*/
 
+		/*zeroing pivot matrix*/
+		pivot_matrix[_i][_i] = 0.0;
+		pivot_matrix[_i][_j] = 0.0;
+		pivot_matrix[_j][_i] = 0.0;
+		pivot_matrix[_j][_j] = 0.0;
 		/*breaking in case converged*/
 		if ((current_off_diag_sum - new_off_diag_sum) <= epsilon) {
 			break;
@@ -255,16 +254,24 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 	}
 	
 	res->eigen_vectors_as_columns = dotted_pivots;
-	res->eigen_vectors = transposeMatrix(dotted_pivots, n, "new");
-	if (!(res->eigen_vectors)) {
+	eigen_values = malloc(sizeof(double) * n);
+	if (!eigen_values) {
 		freeMatrix(dotted_pivots);
 		free(res);
 		return NULL;
 	}
-	eigen_values = malloc(sizeof(double) * n);
-	if (!eigen_values) {
+	/*for (i = 0; i < n;i++) {
+		if (_is_negative_zero(eigen_values[i])) {
+			for (j = 0;j < n;j++) {
+				dotted_pivots[j][i] *= -1.0;
+			}
+			eigen_values[i] = 0.0;
+		}
+	}*/
+	res->eigen_vectors = transposeMatrix(dotted_pivots, n, "new");
+	if (!(res->eigen_vectors)) {
 		freeMatrix(dotted_pivots);
-		freeMatrix(res->eigen_vectors);
+		free(eigen_values);
 		free(res);
 		return NULL;
 	}
@@ -322,8 +329,11 @@ MATRIX weightedAdjacencyMatrix(double** points, size_t n,size_t dimension) {
 	if (!res) {
 		return NULL;
 	}
+	for (i = 0; i < n;i++) {
+		res[i][i] = 0;
+	}
 	for (i = 0; i < n; i++) {
-		for (j = i; j < n;j++) {
+		for (j = i+1; j < n;j++) {
 			double val = twoNorm(points[i], points[j], dimension);
 			val *= -1;
 			val /= 2;
