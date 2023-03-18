@@ -88,7 +88,7 @@ PIVOT_VALUES* generatePivotValues(MATRIX _A, size_t n) {	// i,j,s,c
 
 int generatePivotMatrix(MATRIX target,size_t n,PIVOT_VALUES* pivot_values) {
 	//memset((*target), 0.0, pow(n,2));
-	int i, j;
+	size_t i, j;
 	double s, c;
 	for (i = 0; i < n; i++) {
 		target[i][i] = 1;
@@ -158,12 +158,11 @@ MATRIX transposeMatrix(MATRIX p,size_t n,const char* how){
 EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double epsilon) {
 	double current_off_diag_sum = 2147483647;
 	double new_off_diag_sum = .0;
-	MATRIX dotted_pivots = NULL; MATRIX pivot_matrix = NULL;MATRIX temp_pivot_pointer = NULL;
-	MATRIX dot_res = NULL;MATRIX transposed_pivot = NULL;MATRIX second_dot_res = NULL;
+	MATRIX dotted_pivots = NULL; MATRIX pivot_matrix = NULL;
 	VECTOR eigen_values = NULL;VECTOR I_col;VECTOR J_col;
-	double a_ii, a_jj, a_ij, a_ii_tag, a_jj_tag,s,c;
+	double a_ii_tag, a_jj_tag,s,c;
 	size_t i, j,k, _i,_j,m;
-	PIVOT_VALUES* pivot_values;
+	PIVOT_VALUES* pivot_values = NULL;
 	EIGEN_VALUES_VECTORS* res = malloc(sizeof(EIGEN_VALUES_VECTORS));
 	if (!res) {
 		return NULL;
@@ -185,7 +184,9 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 	}
 
 	for (i = 0; i < iteration_limit; i++) {
-		pivot_values = generatePivotValues(_A, n);
+		if (!(pivot_values = generatePivotValues(_A, n)))
+			return NULL;
+		
 		generatePivotMatrix(pivot_matrix, n,pivot_values);
 
 		_i = pivot_values->i;
@@ -288,7 +289,7 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 size_t find_k(VECTOR e_values,size_t n) {
 	size_t i;
 	double max_gap = .0;
-	size_t argMax;
+	size_t argMax = 0;
 	for ( i = 0; i < n/2; i++) {
 		if (e_values[i + 1] - e_values[i] > max_gap) {
 			max_gap = e_values[i + 1] - e_values[i];

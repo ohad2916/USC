@@ -61,7 +61,6 @@ if goal == 'spk':
     X_df = pd.read_csv(file_name, header=None)
     X = X_df.values.tolist()
     L = mk.gl(X)  # graph Laplacian
-
     if k == -1:
         reg_jacobi_values, U, reg_k = mk.jacobi(L, "sorted", 0)
         starting_centroids_df, starting_centroids_indices = init_centroids(pd.DataFrame(U), reg_k)
@@ -71,7 +70,6 @@ if goal == 'spk':
         starting_centroids_df, starting_centroids_indices = init_centroids(pd.DataFrame(U), k)
 
     starting_centroids = starting_centroids_df.values.tolist()
-
     try:
         kmeans_res = mk.spk(U, starting_centroids, iter_, epsilon)
     except:

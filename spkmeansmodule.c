@@ -314,7 +314,7 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
     PyObject* py_point_list;
     char* how;
     int requested_k;
-    if (!PyArg_ParseTuple(args, "Os*n", &py_point_list,&how,&requested_k)) {
+    if (!PyArg_ParseTuple(args, "Osi", &py_point_list,&how,&requested_k)) {
         PyErr_SetString(PyExc_Exception, "An Error Has Occurred");
         return NULL;
     }
@@ -348,7 +348,7 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
         return NULL;
     }
     size_t k = -1;
-    int col_limit = dimension;
+    size_t col_limit = dimension;
     double* vector_ptr_for_freeing_later = *(jacobis_res->eigen_vectors);
     if (strcmp(how,"sorted")==0) {
         sortEigenVectors(jacobis_res, dimension);
@@ -359,7 +359,6 @@ static PyObject* jacob(PyObject* self, PyObject* args) {
     if (requested_k > 0) {
         col_limit = requested_k;
     }
-
     PyObject* py_eigen_vectors = PyList_New(dimension);
     MATRIX c_eigen_vectors = jacobis_res->eigen_vectors_as_columns;
     for (i = 0; i < dimension; i++) {
