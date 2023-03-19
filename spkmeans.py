@@ -5,8 +5,8 @@ import sys
 
 arg_c = len(sys.argv)
 np.random.seed(0)
-iter_ = 200
-epsilon = 0.001
+iter_ = 300
+epsilon = 0.0
 k = -1
 
 if arg_c > 4 or arg_c < 3:

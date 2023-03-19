@@ -18,12 +18,12 @@ int main(int argc, char* argv[]) {
 	MATRIX weight_adj;MATRIX diag_degree_mat;MATRIX graph_laplacian;
 	/*handeling cmdline arguments*/
 	if (argc != 3) {
-		printf("An Error Has Occured");
+		printf("An Error Has Occured\n");
 		return 1;
 	}
 	file = fopen(argv[2], "r");
 	if (!file) {
-		printf("an Error has occured!");
+		printf("an Error has occured\n");
 		return 1;
 	}
 	if (strcmp(argv[1], "wam") == 0)
@@ -51,11 +51,11 @@ int main(int argc, char* argv[]) {
 	rewind(file);
 
 	if (!(points_list = malloc(sizeof(double*) * point_count))) {
-		printf("an Error has occured!");
+		printf("an Error has occured!\n");
 		return 1;
 	}
 	if (!(p = malloc(sizeof(double) * point_count * dimension))) {
-		printf("an Error has occured!");
+		printf("an Error has occured!\n");
 		return 1;
 	}
 	for (i = 0; i < point_count; i++) {
@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
 		}
 		else {
 			return_value = 1;
-			printf("an Error has occured!");
+			printf("an Error has occured!\n");
 		}
 		freeMatrix(points_list);
 		free(jacobis_res->eigen_values);
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
 			printMatrix(weight_adj, point_count, point_count);
 		else {
 			return_value = 1;
-			printf("an Error has occured!");
+			printf("an Error has occured!\n");
 		}
 		freeMatrix(weight_adj);
 		freeMatrix(points_list);
@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
 			printMatrix(diag_degree_mat, point_count, point_count);
 		else {
 			return_value = 1;
-			printf("an Error has occured!");
+			printf("an Error has occured!\n");
 		}
 		freeMatrix(diag_degree_mat);
 		freeMatrix(weight_adj);
@@ -124,7 +124,7 @@ int main(int argc, char* argv[]) {
 			printMatrix(graph_laplacian, point_count, point_count);
 		else {
 			return_value = 1;
-			printf("an Error has occured!");
+			printf("an Error has occured!\n");
 		}
 		freeMatrix(graph_laplacian);
 		freeMatrix(diag_degree_mat);

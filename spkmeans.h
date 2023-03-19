@@ -54,7 +54,7 @@ MATRIX allocateSquareMatrix(size_t n) {
 	return matrix;
 }
 
-PIVOT_VALUES* generatePivotValues(MATRIX _A, size_t n) {	// i,j,s,c
+PIVOT_VALUES* generatePivotValues(MATRIX _A, size_t n) {	
 	size_t i, j, argmax_i, argmax_j;
 	double max_value = -1.0;
 	double phi, c, t, s;
@@ -87,7 +87,6 @@ PIVOT_VALUES* generatePivotValues(MATRIX _A, size_t n) {	// i,j,s,c
 }
 
 int generatePivotMatrix(MATRIX target,size_t n,PIVOT_VALUES* pivot_values) {
-	//memset((*target), 0.0, pow(n,2));
 	size_t i, j;
 	double s, c;
 	for (i = 0; i < n; i++) {
@@ -208,9 +207,9 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 			dotted_pivots[k][_j] = J_col[k];
 		}
 
-		//------calculating A'------
+		/*------calculating A'------*/
 		
-			//copying columns
+			/*copying columns*/
 	
 		for (k = 0; k < n;k++) {
 			I_col[k] = _A[k][_i];
@@ -395,9 +394,9 @@ int printMatrix(double** mat, size_t rows, size_t cols) {
 	size_t i = 0; size_t j = 0;
 	for (i = 0; i < rows; i++) {
 		for (j = 0; j < cols - 1; j++) {
-			printf("%.2f,", mat[i][j]);
+			printf("%.4f,", mat[i][j]);
 		}
-		printf("%.2f\n", mat[i][cols - 1]);
+		printf("%.4f\n", mat[i][cols - 1]);
 	}
 	return 0;
 }
