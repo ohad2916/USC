@@ -176,16 +176,26 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 		dotted_pivots[i][i] = 1;
 	}
 	if (!(J_col = malloc(sizeof(double) * n))) {
+		free(res);
+		freeMatrix(dotted_pivots);
 		return NULL;
 	}
 	if (!(I_col = malloc(sizeof(double) * n))) {
+		freeMatrix(dotted_pivots);
+		free(J_col);
+		free(res);
 		return NULL;
 	}
 
 	for (i = 0; i < iteration_limit; i++) {
-		if (!(pivot_values = generatePivotValues(_A, n)))
+		if (!(pivot_values = generatePivotValues(_A, n))) {
+			free(J_col);
+			free(I_col);
+			freeMatrix(dotted_pivots);
+			free(res);
 			return NULL;
-		
+		}
+
 		generatePivotMatrix(pivot_matrix, n,pivot_values);
 
 		_i = pivot_values->i;
@@ -251,11 +261,15 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 			break;
 		}
 		current_off_diag_sum = new_off_diag_sum;
+		free(pivot_values);
+		pivot_values = NULL;
 	}
 	
 	res->eigen_vectors_as_columns = dotted_pivots;
 	eigen_values = malloc(sizeof(double) * n);
 	if (!eigen_values) {
+		free(J_col);
+		free(I_col);
 		freeMatrix(dotted_pivots);
 		free(res);
 		return NULL;
@@ -280,6 +294,8 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 	}
 	res->eigen_values = eigen_values;
 
+	free(J_col);
+	free(I_col);
 	free(pivot_values);
 	freeMatrix(pivot_matrix);
 	return res;
@@ -403,9 +419,9 @@ int printMatrix(double** mat, size_t rows, size_t cols) {
 int printVector(VECTOR v, size_t n) {
 	size_t i = 0;
 	for (i = 0; i < n - 1;i++) {
-		printf("%.2f,", v[i]);
+		printf("%.4f,", v[i]);
 	}
-	printf("%.2f",v[n - 1]);
+	printf("%.4f",v[n - 1]);
 	printf("\n");
 	return 0;
 }

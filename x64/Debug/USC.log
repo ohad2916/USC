@@ -1,7 +1,29 @@
 ﻿  spkmeans.c
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(82,11): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(82,29): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(165,9): warning C4101: 'a_ii': unreferenced local variable
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(165,15): warning C4101: 'a_jj': unreferenced local variable
-C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(165,21): warning C4101: 'a_ij': unreferenced local variable
-  USC.vcxproj -> C:\Users\ohada\Desktop\Final Project\USC\x64\Debug\USC.exe
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(85,11): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(85,29): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(196,17): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(197,17): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
+  spkmeansmodule.c
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(85,11): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(85,29): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(196,17): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
+C:\Users\ohada\Desktop\Final Project\USC\spkmeans.h(197,17): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
+  Generating Code...
+spkmeansmodule.obj : error LNK2005: allocateNonSquareMatrix already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: allocateSquareMatrix already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: diagonalDegreeMatrix already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: find_k already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: freeMatrix already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: generatePivotMatrix already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: generatePivotValues already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: graphLaplacian already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: jacobis already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: matrixDot already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: printMatrix already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: printVector already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: sortEigenVectors already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: transposeMatrix already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: twoNorm already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: vectorDot already defined in spkmeans.obj
+spkmeansmodule.obj : error LNK2005: weightedAdjacencyMatrix already defined in spkmeans.obj
+LINK : fatal error LNK1104: cannot open file 'python37_d.lib'
