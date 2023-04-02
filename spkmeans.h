@@ -5,7 +5,7 @@
 
 #define MATRIX double**
 #define VECTOR double*
-#define _is_negative_zero(x) ((x == 0.0 && signbit(x) != 0) || \
+#define _is_negative_zero(x) ((x == 0.0 && x < 0.0) || \
                               (x > -0.0001 && x < 0.0))
 
 double twoNorm(double* a, double* b, size_t dimension) {
@@ -274,14 +274,6 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 		free(res);
 		return NULL;
 	}
-	for (i = 0; i < n;i++) {
-		if (_is_negative_zero(eigen_values[i])) {
-			for (j = 0;j < n;j++) {
-				dotted_pivots[j][i] *= -1.0;
-			}
-			eigen_values[i] = 0.0;
-		}
-	}
 	res->eigen_vectors = transposeMatrix(dotted_pivots, n, "new");
 	if (!(res->eigen_vectors)) {
 		freeMatrix(dotted_pivots);
@@ -291,6 +283,14 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 	}
 	for (i = 0; i < n; i++) {
 		eigen_values[i] = _A[i][i];
+	}
+	for (i = 0; i < n;i++) {
+		if (_is_negative_zero(eigen_values[i])) {
+			for (j = 0;j < n;j++) {
+				dotted_pivots[j][i] *= -1.0;
+			}
+			eigen_values[i] = 0.0;
+		}
 	}
 	res->eigen_values = eigen_values;
 
