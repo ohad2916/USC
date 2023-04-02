@@ -388,7 +388,7 @@ static PyMethodDef methods[] = {
     {"wam",(PyCFunction)wam,METH_VARARGS,PyDoc_STR("takes points list(2D), returns the weight adjacency matrix")},
     {"ddg",(PyCFunction)ddg,METH_VARARGS,PyDoc_STR("takes points list(2D), returns the diagonal degree matrix")},
     {"gl",(PyCFunction)gl,METH_VARARGS,PyDoc_STR("takes points list(2D), returns the graph laplacian matrix")},
-    {"jacobi",(PyCFunction)jacob,METH_VARARGS,PyDoc_STR("jacobis on a symmetric matrix,second argument should be \"sorted\" for spk purposes\n, returns(values,vectors matrix,k)")},
+    {"jacobi",(PyCFunction)jacob,METH_VARARGS,PyDoc_STR("jacobis on a symmetric matrix,second argument should be \"sorted\" for spk purposes\n, return: (values,vectors matrix(U),k)")},
       /*  The docstring for the function */
     {NULL, NULL, 0, NULL}     
 

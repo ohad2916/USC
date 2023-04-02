@@ -274,14 +274,14 @@ EIGEN_VALUES_VECTORS* jacobis(MATRIX _A,size_t n,size_t iteration_limit, double 
 		free(res);
 		return NULL;
 	}
-	/*for (i = 0; i < n;i++) {
+	for (i = 0; i < n;i++) {
 		if (_is_negative_zero(eigen_values[i])) {
 			for (j = 0;j < n;j++) {
 				dotted_pivots[j][i] *= -1.0;
 			}
 			eigen_values[i] = 0.0;
 		}
-	}*/
+	}
 	res->eigen_vectors = transposeMatrix(dotted_pivots, n, "new");
 	if (!(res->eigen_vectors)) {
 		freeMatrix(dotted_pivots);
