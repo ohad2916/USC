@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 	else if (strcmp(argv[1], "jacobi") == 0)
 		mode = 3;
 	else {
-		printf("an Error has occured!");
+		printf("an Error has occured!\n");
 		return 1;
 	}
 	/*reading the file*/

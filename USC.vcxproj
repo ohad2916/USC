@@ -138,6 +138,7 @@
     <ClInclude Include="spkmeans.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="main_logic.c" />
     <ClCompile Include="spkmeans.c" />
     <ClCompile Include="spkmeansmodule.c" />
   </ItemGroup>
